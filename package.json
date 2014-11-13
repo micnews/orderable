@@ -1,0 +1,14 @@
+{
+  "name": "orderable",
+  "version": "0.0.0",
+  "description": "Readable stream to which you can push chunks at an index",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": "micnews/orderable",
+  "devDependencies": {
+    "concat-stream": "^1.4.6",
+    "tape": "^3.0.3"
+  },
+  "license": "MIT"
+}
