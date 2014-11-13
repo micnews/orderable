@@ -3,6 +3,8 @@
 
   A readable stream to which you can in random order push chunks with an index, and they will be emitted by index ascending.
 
+  [![build status](https://secure.travis-ci.org/micnews/orderable.svg)](http://travis-ci.org/micnews/orderable)
+
 ## Example
 
 ```js
