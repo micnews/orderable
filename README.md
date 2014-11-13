@@ -26,7 +26,7 @@ setTimeout(function(){
 o.pipe(process.stdout);
 ```
 
-  Outputs:
+  Always outputs:
 
 ```bash
 $ node example.js
