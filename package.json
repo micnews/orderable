@@ -10,5 +10,8 @@
     "concat-stream": "^1.4.6",
     "tape": "^3.0.3"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "stream-read": "^1.0.1"
+  }
 }
