@@ -1,5 +1,6 @@
 var Readable = require('stream').Readable;
 var inherits = require('util').inherits;
+var read = require('stream-read');
 
 module.exports = Orderable;
 inherits(Orderable, Readable);
@@ -17,10 +18,28 @@ Orderable.prototype.set = function(i, chunk){
 };
 
 Orderable.prototype._read = function(){
-  if (typeof this._buf[this._idx] != 'undefined') {
-    this.push(this._buf[this._idx++]);
-  } else {
+  var self = this;
+  var value = this._buf[this._idx];
+
+  if (typeof value == 'undefined') {
     this.once('readable', this._read.bind(this));
+  }
+  else if (value === null) {
+    this.push(null);
+  }
+  else if (typeof value.pipe == 'function') {
+    read(value, function(err, chunk){
+      if (err) return self.emit('error', err);
+      if (chunk === null) {
+        self._idx++;
+        self._read();
+      }
+      else self.push(chunk);
+    });
+  }
+  else {
+    this._idx++;
+    this.push(value);
   }
 };
 

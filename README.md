@@ -1,7 +1,7 @@
 
 # orderable
 
-  A readable stream to which you can in random order push chunks with an index, and they will be emitted by index ascending.
+  A readable stream to which you can in random order push chunks or sub-streams with an index, and they will be emitted by index ascending.
 
   [![build status](https://secure.travis-ci.org/micnews/orderable.svg)](http://travis-ci.org/micnews/orderable)
 
@@ -17,7 +17,7 @@ setTimeout(function(){
 }, Math.random() * 1000);
 
 setTimeout(function(){
-  o.set(1, 'bar\n');
+  o.set(1, createStringStream(['b', 'a', 'r', '\n']));
 }, Math.random() * 1000);
 
 setTimeout(function(){
@@ -52,7 +52,7 @@ $ npm install orderable
 
 ### Orderable#set(index, chunk)
 
-  Push `chunk` onto the internal buffer at `index`. Pass `chunk=null` to mark the end of a stream.
+  Push `chunk` onto the internal buffer at `index`. Pass `chunk=null` to mark the end of a stream. You can pass readable streams as well.
 
   You can also do this at the beginning, like:
 
