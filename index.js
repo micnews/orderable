@@ -1,6 +1,7 @@
 var Readable = require('stream').Readable;
 var inherits = require('util').inherits;
 var read = require('stream-read');
+var PassThrough = require('stream').PassThrough;
 
 module.exports = Orderable;
 inherits(Orderable, Readable);
@@ -13,6 +14,12 @@ function Orderable(){
 }
 
 Orderable.prototype.set = function(i, chunk){
+  if (chunk && typeof chunk.pipe == 'function') {
+    var buf = PassThrough({ objectMode: true });
+    chunk.pipe(buf);
+    chunk.on('error', this.emit.bind(this, 'error'));
+    chunk = buf;
+  }
   this._buf[i] = chunk;
   this.emit('readable');
 };
