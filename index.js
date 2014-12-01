@@ -29,7 +29,7 @@ Orderable.prototype._read = function(){
   var value = this._buf[this._idx];
 
   if (typeof value == 'undefined') {
-    this.once('new', this.push.bind(this, ''));
+    this.once('new', this._read.bind(this));
   }
   else if (value === null) {
     this.push(null);
@@ -39,7 +39,7 @@ Orderable.prototype._read = function(){
       if (err) return self.emit('error', err);
       if (chunk === null) {
         self._idx++;
-        self.push('');
+        self._read();
       }
       else self.push(chunk);
     });
