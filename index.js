@@ -21,7 +21,7 @@ Orderable.prototype.set = function(i, chunk){
     chunk = buf;
   }
   this._buf[i] = chunk;
-  this.emit('readable');
+  this.emit('new');
 };
 
 Orderable.prototype._read = function(){
@@ -29,7 +29,7 @@ Orderable.prototype._read = function(){
   var value = this._buf[this._idx];
 
   if (typeof value == 'undefined') {
-    this.once('readable', this._read.bind(this));
+    this.once('new', this.push.bind(this, ''));
   }
   else if (value === null) {
     this.push(null);
@@ -39,7 +39,7 @@ Orderable.prototype._read = function(){
       if (err) return self.emit('error', err);
       if (chunk === null) {
         self._idx++;
-        self._read();
+        self.push('');
       }
       else self.push(chunk);
     });
