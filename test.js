@@ -1,7 +1,13 @@
 var test = require('tape');
 var Orderable = require('./');
-var concat = require('concat-stream');
 var Readable = require('stream').Readable;
+
+function concat(stream, cb){
+  var chunks = [];
+  stream.on('data', chunks.push.bind(chunks));
+  stream.on('error', cb);
+  stream.on('end', cb.bind(null, null, chunks));
+}
 
 test('forwards', function(t){
   var o = Orderable();
@@ -10,10 +16,11 @@ test('forwards', function(t){
     o.set(1, 'bar');
     o.set(2, null);
   });
-  o.pipe(concat(function(res){
-    t.equal(res, 'foobar');
+  concat(o, function(err, res){
+    t.error(err);
+    t.deepEqual(res, ['foo', 'bar']);
     t.end();
-  }));
+  });
 });
 
 test('backwards', function(t){
@@ -23,10 +30,11 @@ test('backwards', function(t){
     o.set(1, 'bar');
     o.set(0, 'foo');
   });
-  o.pipe(concat(function(res){
-    t.equal(res, 'foobar');
+  concat(o, function(err, res){
+    t.error(err);
+    t.deepEqual(res, ['foo', 'bar']);
     t.end();
-  }));
+  });
 });
 
 test('mixed', function(t){
@@ -36,10 +44,11 @@ test('mixed', function(t){
     o.set(2, null);
     o.set(0, 'foo');
   });
-  o.pipe(concat(function(res){
-    t.equal(res, 'foobar');
+  concat(o, function(err, res){
+    t.error(err);
+    t.deepEqual(res, ['foo', 'bar']);
     t.end();
-  }));
+  });
 });
 
 test('stream', function(t){
@@ -50,15 +59,17 @@ test('stream', function(t){
     o.set(2, 'baz');
     o.set(3, null);
   });
-  o.pipe(concat(function(res){
-    t.equal(res, 'foobarbaz');
+  concat(o, function(err, res){
+    t.error(err);
+    t.deepEqual(res, ['foo', 'b', 'a', 'r', 'baz']);
     t.end();
-  }));
+  });
 });
 
 function emits(arr){
   var i = 0;
   var r = Readable();
+  r.setEncoding('utf8');
   r._read = function(){
     r.push(arr[i++]);
   };
